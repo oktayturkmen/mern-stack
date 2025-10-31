@@ -71,7 +71,8 @@ export default function AdminNav() {
                 borderBottom: isActive('/admin/products') ? '1px solid #1a1a1a' : 'none',
                 transition: 'all 0.2s ease',
                 fontSize: 14,
-                fontWeight: isActive('/admin/products') ? 500 : 300
+                fontWeight: isActive('/admin/products') ? 500 : 300,
+                cursor: 'pointer'
               }}
             >
               Ürünleri Yönet
@@ -85,7 +86,8 @@ export default function AdminNav() {
                 borderBottom: isActive('/admin/orders') ? '1px solid #1a1a1a' : 'none',
                 transition: 'all 0.2s ease',
                 fontSize: 14,
-                fontWeight: isActive('/admin/orders') ? 500 : 300
+                fontWeight: isActive('/admin/orders') ? 500 : 300,
+                cursor: 'pointer'
               }}
             >
               Siparişleri Yönet
@@ -99,7 +101,8 @@ export default function AdminNav() {
                 borderBottom: isActive('/products') ? '1px solid #1a1a1a' : 'none',
                 transition: 'all 0.2s ease',
                 fontSize: 14,
-                fontWeight: isActive('/products') ? 500 : 300
+                fontWeight: isActive('/products') ? 500 : 300,
+                cursor: 'pointer'
               }}
             >
               Ürünler
@@ -116,7 +119,8 @@ export default function AdminNav() {
                 fontWeight: isActive('/cart') ? 500 : 300,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8
+                gap: 8,
+                cursor: 'pointer'
               }}
             >
               <span>Sepet</span>
@@ -179,7 +183,7 @@ export default function AdminNav() {
                   zIndex: 1000
                 }}>
                   <Link 
-                    to="/"
+                    to="/account/profile"
                     onClick={() => setShowAccountMenu(false)}
                     style={{
                       display: 'block',
@@ -187,24 +191,11 @@ export default function AdminNav() {
                       color: '#1a1a1a',
                       textDecoration: 'none',
                       fontSize: 14,
-                      borderBottom: '1px solid #f0f0f0'
+                      borderBottom: '1px solid #f0f0f0',
+                      cursor: 'pointer'
                     }}
                   >
-                    Genel Bakış
-                  </Link>
-                  <Link 
-                    to="/"
-                    onClick={() => setShowAccountMenu(false)}
-                    style={{
-                      display: 'block',
-                      padding: '12px 16px',
-                      color: '#1a1a1a',
-                      textDecoration: 'none',
-                      fontSize: 14,
-                      borderBottom: '1px solid #f0f0f0'
-                    }}
-                  >
-                    Profil
+                    Profil Bilgilerim
                   </Link>
                   <Link 
                     to="/addresses"
@@ -215,7 +206,8 @@ export default function AdminNav() {
                       color: '#1a1a1a',
                       textDecoration: 'none',
                       fontSize: 14,
-                      borderBottom: '1px solid #f0f0f0'
+                      borderBottom: '1px solid #f0f0f0',
+                      cursor: 'pointer'
                     }}
                   >
                     Adresler
@@ -229,7 +221,8 @@ export default function AdminNav() {
                       color: '#1a1a1a',
                       textDecoration: 'none',
                       fontSize: 14,
-                      borderBottom: '1px solid #f0f0f0'
+                      borderBottom: '1px solid #f0f0f0',
+                      cursor: 'pointer'
                     }}
                   >
                     Siparişlerim

@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
-import { useGetProductsQuery, useCreateProductMutation, useUpdateProductMutation, useDeleteProductMutation } from '../app/api';
+import { useGetProductsQuery, useCreateProductMutation, useUpdateProductMutation, useDeleteProductMutation, useUploadImagesMutation } from '../app/api';
 
 export default function AdminProducts() {
   const { data, isLoading, error, refetch } = useGetProductsQuery({});
   const [createProduct] = useCreateProductMutation();
   const [updateProduct] = useUpdateProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
+  const [uploadImages, { isLoading: isUploading }] = useUploadImagesMutation();
+  
+  // Ön tanımlı kategoriler (dropdown için)
+  const categories = [
+    'Çantalar',
+    'Bardak',
+    'Takılar',
+    'Elektronik Eşyalar',
+    'Ayakkabılar',
+    'Şapkalar',
+    'Kapüşonlu Üstler',
+    'Ceketler',
+    'Çocuklar',
+    'Gömlekler'
+  ];
   
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
@@ -18,22 +33,41 @@ export default function AdminProducts() {
     images: ''
   });
 
+  const handleFileUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const fd = new FormData();
+    Array.from(files).forEach((file) => fd.append('files', file));
+    try {
+      const res = await uploadImages(fd).unwrap();
+      const urls = res.images || [];
+      setFormData((prev) => ({
+        ...prev,
+        images: [prev.images, urls.join(', ')].filter(Boolean).join(', ')
+      }));
+      alert('Görseller yüklendi. URL’ler forma eklendi.');
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Görsel yükleme başarısız', e);
+      alert('Görsel yükleme başarısız.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
     if (!formData.title.trim() || !formData.description.trim() || !formData.category.trim()) {
-      alert('Please fill in all required fields');
+      alert('Lütfen tüm zorunlu alanları doldurun.');
       return;
     }
     
     if (!formData.price || parseFloat(formData.price) <= 0) {
-      alert('Please enter a valid price');
+      alert('Lütfen geçerli bir fiyat girin.');
       return;
     }
     
     if (!formData.stock || parseInt(formData.stock) < 0) {
-      alert('Please enter a valid stock quantity');
+      alert('Lütfen geçerli bir stok miktarı girin.');
       return;
     }
     
@@ -56,8 +90,8 @@ export default function AdminProducts() {
       setShowForm(false);
       refetch();
     } catch (error) {
-      console.error('Product operation failed:', error);
-      alert('Operation failed. Please try again.');
+      console.error('Ürün işlemi başarısız oldu:', error);
+      alert('İşlem başarısız. Lütfen tekrar deneyin.');
     }
   };
 
@@ -75,14 +109,14 @@ export default function AdminProducts() {
   };
 
   const handleDelete = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+    if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
     
     try {
       await deleteProduct(productId).unwrap();
       refetch();
     } catch (error) {
-      console.error('Product deletion failed:', error);
-      alert('Deletion failed. Please try again.');
+      console.error('Ürün silme işlemi başarısız oldu:', error);
+      alert('Silme işlemi başarısız. Lütfen tekrar deneyin.');
     }
   };
 
@@ -95,7 +129,7 @@ export default function AdminProducts() {
   if (isLoading) {
     return (
       <div style={{ padding: 20, textAlign: 'center' }}>
-        <p>Loading products...</p>
+        <p>Ürünler yükleniyor...</p>
       </div>
     );
   }
@@ -103,7 +137,7 @@ export default function AdminProducts() {
   if (error) {
     return (
       <div style={{ padding: 20, textAlign: 'center', color: 'red' }}>
-        <p>Error loading products</p>
+        <p>Ürünler yüklenirken hata oluştu</p>
       </div>
     );
   }
@@ -111,7 +145,7 @@ export default function AdminProducts() {
   return (
     <div style={{ padding: 20, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
-        <h2>Admin - Product Management</h2>
+        <h2>Yönetici - Ürün Yönetimi</h2>
         <button 
           onClick={() => setShowForm(true)}
           style={{
@@ -123,7 +157,7 @@ export default function AdminProducts() {
             cursor: 'pointer'
           }}
         >
-          Add New Product
+          Yeni Ürün Ekle
         </button>
       </div>
 
@@ -136,11 +170,11 @@ export default function AdminProducts() {
           backgroundColor: '#f8f9fa',
           marginBottom: 30
         }}>
-          <h3>{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
+          <h3>{editingProduct ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h3>
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 15, marginBottom: 15 }}>
               <div>
-                <label>Title *:</label>
+                <label>Başlık *:</label>
                 <input
                   type="text"
                   value={formData.title}
@@ -150,17 +184,21 @@ export default function AdminProducts() {
                 />
               </div>
               <div>
-                <label>Category *:</label>
-                <input
-                  type="text"
+                <label>Kategori *:</label>
+                <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   required
                   style={{ width: '100%', padding: 8, marginTop: 5 }}
-                />
+                >
+                  <option value="" disabled>Bir kategori seçin</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
               </div>
               <div>
-                <label>Price *:</label>
+                <label>Fiyat ($) *:</label>
                 <input
                   type="number"
                   step="0.01"
@@ -172,7 +210,7 @@ export default function AdminProducts() {
                 />
               </div>
               <div>
-                <label>Stock *:</label>
+                <label>Stok *:</label>
                 <input
                   type="number"
                   value={formData.stock}
@@ -184,7 +222,7 @@ export default function AdminProducts() {
               </div>
             </div>
             <div style={{ marginBottom: 15 }}>
-              <label>Description *:</label>
+              <label>Açıklama *:</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -194,13 +232,24 @@ export default function AdminProducts() {
               />
             </div>
             <div style={{ marginBottom: 15 }}>
-              <label>Images (comma-separated URLs):</label>
+              <label>Resimler:</label>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 5, flexWrap: 'wrap' }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => handleFileUpload(e.target.files)}
+                />
+                <button type="button" disabled={isUploading} style={{ padding: '8px 12px', backgroundColor: '#2c3e50', color: 'white', border: 'none', borderRadius: 4, cursor: isUploading ? 'not-allowed' : 'pointer' }}>
+                  {isUploading ? 'Yükleniyor...' : 'Bilgisayardan Yükle'}
+                </button>
+              </div>
               <input
                 type="text"
                 value={formData.images}
                 onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-                placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                style={{ width: '100%', padding: 8, marginTop: 5 }}
+                placeholder="Yüklenen URL’ler burada listelenir veya manuel ekleyin (virgülle)"
+                style={{ width: '100%', padding: 8, marginTop: 8 }}
               />
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
@@ -212,7 +261,7 @@ export default function AdminProducts() {
                 borderRadius: 4,
                 cursor: 'pointer'
               }}>
-                {editingProduct ? 'Update Product' : 'Create Product'}
+                {editingProduct ? 'Ürünü Güncelle' : 'Ürün Oluştur'}
               </button>
               <button type="button" onClick={handleCancel} style={{
                 padding: '10px 20px',
@@ -222,7 +271,7 @@ export default function AdminProducts() {
                 borderRadius: 4,
                 cursor: 'pointer'
               }}>
-                Cancel
+                İptal
               </button>
             </div>
           </form>
@@ -260,7 +309,7 @@ export default function AdminProducts() {
                   fontSize: 12,
                   color: '#999'
                 }}>
-                  No Image
+                  Resim Yok
                 </div>
               )}
             </div>
@@ -270,15 +319,15 @@ export default function AdminProducts() {
               <h3 style={{ margin: '0 0 10px 0' }}>{product.title}</h3>
               <p style={{ margin: '0 0 10px 0', color: '#666' }}>{product.description}</p>
               <div style={{ display: 'flex', gap: 20, marginBottom: 10 }}>
-                <span><strong>Price:</strong> ${product.price}</span>
-                <span><strong>Stock:</strong> {product.stock}</span>
-                <span><strong>Category:</strong> {product.category}</span>
+                <span><strong>Fiyat:</strong> ${product.price}</span>
+                <span><strong>Stok:</strong> {product.stock}</span>
+                <span><strong>Kategori:</strong> {product.category}</span>
                 {product.ratingCount > 0 && (
-                  <span><strong>Rating:</strong> {product.ratingAvg.toFixed(1)} ⭐ ({product.ratingCount})</span>
+                  <span><strong>Puan:</strong> {product.ratingAvg.toFixed(1)} ⭐ ({product.ratingCount})</span>
                 )}
               </div>
               <div style={{ fontSize: 12, color: '#999' }}>
-                Created: {new Date(product.createdAt).toLocaleDateString()}
+                Oluşturulma: {new Date(product.createdAt).toLocaleDateString('tr-TR')}
               </div>
             </div>
 
@@ -295,7 +344,7 @@ export default function AdminProducts() {
                   cursor: 'pointer'
                 }}
               >
-                Edit
+                Düzenle
               </button>
               <button 
                 onClick={() => handleDelete(product._id)}
@@ -308,7 +357,7 @@ export default function AdminProducts() {
                   cursor: 'pointer'
                 }}
               >
-                Delete
+                Sil
               </button>
             </div>
           </div>
@@ -317,7 +366,7 @@ export default function AdminProducts() {
 
       {data?.products?.length === 0 && (
         <div style={{ padding: 40, textAlign: 'center', color: '#666' }}>
-          <p>No products found. Add your first product!</p>
+          <p>Hiç ürün yok. Yeni ürün ekleyin!</p>
         </div>
       )}
     </div>

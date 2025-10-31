@@ -28,12 +28,31 @@ export default function AdminOrders() {
     }
   };
 
+  // Türkçe durumlar & yardımcı fonksiyonlar
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'pending': return 'Beklemede';
+      case 'processing': return 'İşleniyor';
+      case 'shipped': return 'Kargoda';
+      case 'delivered': return 'Teslim Edildi';
+      case 'cancelled': return 'İptal';
+      default: return status;
+    }
+  };
+  const getPaymentMethodText = (method: string) => {
+    switch (method) {
+      case 'stripe': return 'Kredi Kartı (Stripe)';
+      case 'iyzico': return 'Kredi Kartı (Iyzico)';
+      case 'cash': return 'Kapıda Ödeme';
+      default: return method;
+    }
+  };
   const statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'processing', label: 'Processing' },
-    { value: 'shipped', label: 'Shipped' },
-    { value: 'delivered', label: 'Delivered' },
-    { value: 'cancelled', label: 'Cancelled' }
+    { value: 'pending', label: 'Beklemede' },
+    { value: 'processing', label: 'İşleniyor' },
+    { value: 'shipped', label: 'Kargoda' },
+    { value: 'delivered', label: 'Teslim Edildi' },
+    { value: 'cancelled', label: 'İptal' }
   ];
 
   if (isLoading) {
@@ -54,7 +73,7 @@ export default function AdminOrders() {
 
   return (
     <div style={{ padding: 20, maxWidth: 1200, margin: '0 auto' }}>
-      <h2>Admin - Order Management</h2>
+      <h2>Yönetici - Sipariş Yönetimi</h2>
       
       <div style={{ display: 'grid', gap: 20 }}>
         {data?.orders?.map((order: any) => (
@@ -66,12 +85,12 @@ export default function AdminOrders() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div>
-                <h3 style={{ margin: '0 0 5px 0' }}>Order #{order._id.slice(-8)}</h3>
+                <h3 style={{ margin: '0 0 5px 0' }}>Sipariş #{order._id.slice(-8)}</h3>
                 <p style={{ margin: '0 0 5px 0', color: '#666' }}>
-                  Customer: {order.user?.name || 'Unknown'} ({order.user?.email || 'No email'})
+                  Kullanıcı: {order.user?.name || 'Bilinmiyor'} ({order.user?.email || 'Yok'})
                 </p>
                 <p style={{ margin: 0, color: '#666' }}>
-                  Placed: {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString()}
+                  Oluşturulma: {new Date(order.createdAt).toLocaleDateString('tr-TR', {year:'numeric',month:'long',day:'numeric'})} {new Date(order.createdAt).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}
                 </p>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -83,9 +102,8 @@ export default function AdminOrders() {
                     borderRadius: 4,
                     fontSize: 14,
                     textTransform: 'uppercase',
-                    fontWeight: 'bold'
-                  }}>
-                    {order.status}
+                    fontWeight: 'bold'}}>
+                    {getStatusText(order.status)}
                   </span>
                 </div>
                 <p style={{ margin: 0, fontSize: 18, fontWeight: 'bold' }}>
@@ -94,53 +112,33 @@ export default function AdminOrders() {
               </div>
             </div>
 
-            {/* Order Items */}
+            {/* Sipariş Kalemleri */}
             <div style={{ marginBottom: 20 }}>
-              <h4 style={{ margin: '0 0 15px 0' }}>Order Items</h4>
+              <h4 style={{ margin: '0 0 15px 0' }}>Ürünler</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {order.items.map((item: any, index: number) => (
-                  <div key={index} style={{ 
-                    display: 'flex', 
-                    gap: 15, 
-                    padding: 12, 
-                    border: '1px solid #eee', 
-                    borderRadius: 4 
-                  }}>
+                  <div key={index} style={{ display: 'flex', gap: 15, padding: 12, border: '1px solid #eee', borderRadius: 4 }}>
                     <div>
                       {item.product?.images?.[0] ? (
-                        <img 
-                          src={item.product.images[0]} 
-                          alt={item.product.title}
-                          style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 4 }}
-                        />
+                        <img src={item.product.images[0]} alt={item.product.title} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 4 }} />
                       ) : (
-                        <div style={{ 
-                          width: 60, 
-                          height: 60, 
-                          backgroundColor: '#f0f0f0', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center',
-                          borderRadius: 4,
-                          fontSize: 12,
-                          color: '#999'
-                        }}>
-                          No Image
+                        <div style={ {width: 60, height: 60, backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 4, fontSize: 12, color: '#999'} }>
+                          Resim Yok
                         </div>
                       )}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <h5 style={{ margin: '0 0 5px 0', fontSize: 16 }}>{item.product?.title || 'Product'}</h5>
+                      <h5 style={{ margin: '0 0 5px 0', fontSize: 16 }}>{item.product?.title || 'Ürün'}</h5>
                       <p style={{ margin: '0 0 5px 0', color: '#666', fontSize: 14 }}>
-                        Category: {item.product?.category || 'N/A'}
+                        Kategori: {item.product?.category || '—'}
                       </p>
                       <p style={{ margin: 0, color: '#666', fontSize: 14 }}>
-                        Quantity: {item.quantity} × ${item.price.toFixed(2)}
+                        Adet: {item.quantity} × ₺{item.price.toFixed(2)}
                       </p>
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <p style={{ margin: 0, fontSize: 16, fontWeight: 'bold' }}>
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ${(item.price*item.quantity).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -148,98 +146,61 @@ export default function AdminOrders() {
               </div>
             </div>
 
-            {/* Shipping Address */}
+            {/* Kargo Adresi */}
             <div style={{ marginBottom: 20 }}>
-              <h4 style={{ margin: '0 0 10px 0' }}>Shipping Address</h4>
-              <div style={{ 
-                padding: 12, 
-                backgroundColor: '#f8f9fa', 
-                borderRadius: 4,
-                fontSize: 14
-              }}>
+              <h4 style={{ margin: '0 0 10px 0' }}>Kargo Adresi</h4>
+              <div style={ { padding: 12, backgroundColor: '#f8f9fa', borderRadius: 4, fontSize: 14 } }>
                 <p style={{ margin: '0 0 5px 0' }}>{order.shippingAddress.street}</p>
-                <p style={{ margin: '0 0 5px 0' }}>
-                  {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
-                </p>
+                <p style={{ margin: '0 0 5px 0' }}>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
                 <p style={{ margin: 0 }}>{order.shippingAddress.country}</p>
               </div>
             </div>
-
-            {/* Payment Information */}
+            {/* Ödeme Bilgisi */}
             <div style={{ marginBottom: 20 }}>
-              <h4 style={{ margin: '0 0 10px 0' }}>Payment Information</h4>
-              <div style={{ 
-                padding: 12, 
-                backgroundColor: '#f8f9fa', 
-                borderRadius: 4,
-                fontSize: 14
-              }}>
+              <h4 style={{ margin: '0 0 10px 0' }}>Ödeme Bilgisi</h4>
+              <div style={ { padding: 12, backgroundColor: '#f8f9fa', borderRadius: 4, fontSize: 14 } }>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                  <span>Method:</span>
-                  <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>
-                    {order.payment.method}
-                  </span>
+                  <span>Yöntem:</span>
+                  <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{getPaymentMethodText(order.payment.method)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                  <span>Status:</span>
-                  <span style={{
-                    backgroundColor: order.payment.status === 'paid' ? '#27ae60' : '#f39c12',
-                    color: 'white',
-                    padding: '2px 8px',
-                    borderRadius: 3,
-                    fontSize: 12,
-                    textTransform: 'uppercase'
-                  }}>
-                    {order.payment.status}
+                  <span>Durum:</span>
+                  <span style={{ backgroundColor: order.payment.status==='paid' ? '#27ae60':'#f39c12', color: 'white', padding: '2px 8px', borderRadius: 3, fontSize: 12 }}>
+                    {order.payment.status==='paid'?'Ödendi':'Bekliyor'}
                   </span>
                 </div>
                 {order.payment.transactionId && (
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>Transaction ID:</span>
-                    <span style={{ fontFamily: 'monospace', fontSize: 12 }}>
-                      {order.payment.transactionId}
-                    </span>
+                    <span>İşlem No:</span>
+                    <span style={{ fontFamily: 'monospace', fontSize: 12 }}>{order.payment.transactionId}</span>
                   </div>
                 )}
               </div>
             </div>
-
-            {/* Status Update */}
+            {/* Sipariş Durumu Güncelle */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
-              <label style={{ fontWeight: 'bold' }}>Update Status:</label>
+              <label style={{ fontWeight: 'bold' }}>Durum Güncelle:</label>
               <select
                 value={selectedStatus[order._id] || order.status}
-                onChange={(e) => setSelectedStatus({ ...selectedStatus, [order._id]: e.target.value })}
-                style={{ padding: '8px 12px', borderRadius: 4, border: '1px solid #ddd' }}
-              >
+                onChange={e => setSelectedStatus({ ...selectedStatus, [order._id]: e.target.value })}
+                style={{ padding: '8px 12px', borderRadius: 4, border: '1px solid #ddd' }}>
                 {statusOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                  <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
               <button
                 onClick={() => handleStatusUpdate(order._id, selectedStatus[order._id] || order.status)}
                 disabled={selectedStatus[order._id] === order.status}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: selectedStatus[order._id] === order.status ? '#bdc3c7' : '#3498db',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 4,
-                  cursor: selectedStatus[order._id] === order.status ? 'not-allowed' : 'pointer'
-                }}
-              >
-                Update Status
+                style={{ padding: '8px 16px', backgroundColor: selectedStatus[order._id] === order.status ? '#bdc3c7' : '#3498db', color: 'white', border: 'none', borderRadius: 4, cursor: selectedStatus[order._id] === order.status ? 'not-allowed' : 'pointer' }}>
+                Güncelle
               </button>
             </div>
           </div>
         ))}
       </div>
-
       {data?.orders?.length === 0 && (
         <div style={{ padding: 40, textAlign: 'center', color: '#666' }}>
-          <p>No orders found.</p>
+          <p>Kayıtlı sipariş yok.</p>
         </div>
       )}
     </div>

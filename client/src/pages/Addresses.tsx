@@ -1,25 +1,58 @@
-import React, { useState } from 'react';
-import { useGetMeQuery } from '../app/api';
+import React, { useState, useEffect } from 'react';
+import { useGetMeQuery, useAddAddressMutation, useDeleteAddressMutation } from '../app/api';
+import AccountLayout from '../components/AccountLayout';
 
 export default function Addresses() {
-  const { data: meData } = useGetMeQuery();
+  const { data: meData, refetch } = useGetMeQuery();
+  const [addAddress, { isLoading: isAdding }] = useAddAddressMutation();
+  const [deleteAddressMutation] = useDeleteAddressMutation();
   const [addresses, setAddresses] = useState(meData?.user?.addresses || []);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    address: '',
+    street: '',
     city: '',
     state: '',
-    zip: '',
+    zipCode: '',
+    country: 'Türkiye',
     isDefault: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (meData?.user?.addresses) {
+      setAddresses(meData.user.addresses);
+    }
+  }, [meData]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement address addition/update
-    console.log('Address submitted:', formData);
-    setShowForm(false);
+    try {
+      await addAddress(formData).unwrap();
+      await refetch();
+      setShowForm(false);
+      setFormData({
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: 'Türkiye',
+        isDefault: false
+      });
+    } catch (error) {
+      console.error('Failed to add address:', error);
+      alert('Adres eklenirken hata oluştu');
+    }
+  };
+
+  const handleDelete = async (index: number) => {
+    if (window.confirm('Bu adresi silmek istediğinize emin misiniz?')) {
+      try {
+        await deleteAddressMutation(index).unwrap();
+        await refetch();
+      } catch (error) {
+        console.error('Failed to delete address:', error);
+        alert('Adres silinirken hata oluştu');
+      }
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,15 +64,7 @@ export default function Addresses() {
   };
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: 40 }}>
-      <div style={{ marginBottom: 30 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 400, margin: '0 0 10px', color: '#1a1a1a' }}>
-          Addresses
-        </h1>
-        <p style={{ color: '#666', fontSize: 14 }}>
-          Manage your shipping addresses
-        </p>
-      </div>
+    <AccountLayout title="Adres Defterim" subtitle="Teslimat adreslerinizi yönetin">
 
       {!showForm ? (
         <>
@@ -57,17 +82,14 @@ export default function Addresses() {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                     <div>
-                      <p style={{ margin: '0 0 5px', fontSize: 16, fontWeight: 500, color: '#1a1a1a' }}>
-                        {addr.name}
+                      <p style={{ margin: '0 0 5px', fontSize: 14, color: '#666' }}>
+                        {addr.street}
                       </p>
                       <p style={{ margin: '0 0 5px', fontSize: 14, color: '#666' }}>
-                        {addr.phone}
-                      </p>
-                      <p style={{ margin: '0 0 5px', fontSize: 14, color: '#666' }}>
-                        {addr.address}
+                        {addr.city}, {addr.state} {addr.zipCode}
                       </p>
                       <p style={{ margin: '0', fontSize: 14, color: '#666' }}>
-                        {addr.city}, {addr.state} {addr.zip}
+                        {addr.country}
                       </p>
                       {addr.isDefault && (
                         <span style={{
@@ -79,25 +101,13 @@ export default function Addresses() {
                           borderRadius: 4,
                           fontSize: 12
                         }}>
-                          Default
+                          Varsayılan
                         </span>
                       )}
                     </div>
                     <div style={{ display: 'flex', gap: 10 }}>
                       <button
-                        style={{
-                          padding: '8px 16px',
-                          backgroundColor: 'transparent',
-                          color: '#1a1a1a',
-                          border: '1px solid #e8e8e8',
-                          borderRadius: 4,
-                          cursor: 'pointer',
-                          fontSize: 14
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
+                        onClick={() => handleDelete(index)}
                         style={{
                           padding: '8px 16px',
                           backgroundColor: 'transparent',
@@ -108,7 +118,7 @@ export default function Addresses() {
                           fontSize: 14
                         }}
                       >
-                        Delete
+                        Sil
                       </button>
                     </div>
                   </div>
@@ -123,7 +133,7 @@ export default function Addresses() {
               borderRadius: 8
             }}>
               <p style={{ color: '#666', fontSize: 14 }}>
-                No addresses saved yet
+                Henüz kayıtlı adresiniz yok
               </p>
             </div>
           )}
@@ -141,61 +151,22 @@ export default function Addresses() {
               fontWeight: 300
             }}
           >
-            + Add New Address
+            + Yeni Adres Ekle
           </button>
         </>
       ) : (
         <form onSubmit={handleSubmit} style={{ maxWidth: 600 }}>
           <div style={{ marginBottom: 20 }}>
             <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
-              Full Name
+              Sokak/Adres
             </label>
             <input
               type="text"
-              name="name"
-              value={formData.name}
+              name="street"
+              value={formData.street}
               onChange={handleInputChange}
               required
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                border: '1px solid #e8e8e8',
-                borderRadius: 4,
-                fontSize: 14
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
-              Phone
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              required
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                border: '1px solid #e8e8e8',
-                borderRadius: 4,
-                fontSize: 14
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
-              Address
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              required
+              placeholder="Sokak, cadde, bina no"
               style={{
                 width: '100%',
                 padding: '10px 14px',
@@ -209,7 +180,7 @@ export default function Addresses() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
             <div>
               <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
-                City
+                İlçe
               </label>
               <input
                 type="text"
@@ -217,6 +188,7 @@ export default function Addresses() {
                 value={formData.city}
                 onChange={handleInputChange}
                 required
+                placeholder="İlçe"
                 style={{
                   width: '100%',
                   padding: '10px 14px',
@@ -229,12 +201,56 @@ export default function Addresses() {
 
             <div>
               <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
-                State
+                İl
               </label>
               <input
                 type="text"
                 name="state"
                 value={formData.state}
+                onChange={handleInputChange}
+                required
+                placeholder="İl"
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  border: '1px solid #e8e8e8',
+                  borderRadius: 4,
+                  fontSize: 14
+                }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
+                Posta Kodu
+              </label>
+              <input
+                type="text"
+                name="zipCode"
+                value={formData.zipCode}
+                onChange={handleInputChange}
+                required
+                placeholder="34000"
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  border: '1px solid #e8e8e8',
+                  borderRadius: 4,
+                  fontSize: 14
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
+                Ülke
+              </label>
+              <input
+                type="text"
+                name="country"
+                value={formData.country}
                 onChange={handleInputChange}
                 required
                 style={{
@@ -248,26 +264,6 @@ export default function Addresses() {
             </div>
           </div>
 
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
-              ZIP Code
-            </label>
-            <input
-              type="text"
-              name="zip"
-              value={formData.zip}
-              onChange={handleInputChange}
-              required
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                border: '1px solid #e8e8e8',
-                borderRadius: 4,
-                fontSize: 14
-              }}
-            />
-          </div>
-
           <div style={{ marginBottom: 30, display: 'flex', alignItems: 'center' }}>
             <input
               type="checkbox"
@@ -277,25 +273,26 @@ export default function Addresses() {
               style={{ marginRight: 10 }}
             />
             <label style={{ fontSize: 14, color: '#1a1a1a' }}>
-              Set as default address
+              Varsayılan adres olarak ayarla
             </label>
           </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
             <button
               type="submit"
+              disabled={isAdding}
               style={{
                 padding: '12px 24px',
-                backgroundColor: '#1a1a1a',
+                backgroundColor: isAdding ? '#999' : '#1a1a1a',
                 color: 'white',
                 border: 'none',
                 borderRadius: 4,
-                cursor: 'pointer',
+                cursor: isAdding ? 'not-allowed' : 'pointer',
                 fontSize: 14,
                 fontWeight: 300
               }}
             >
-              Save Address
+              {isAdding ? 'Kaydediliyor...' : 'Adresi Kaydet'}
             </button>
             <button
               type="button"
@@ -311,12 +308,12 @@ export default function Addresses() {
                 fontWeight: 300
               }}
             >
-              Cancel
+              İptal
             </button>
           </div>
         </form>
       )}
-    </div>
+    </AccountLayout>
   );
 }
 

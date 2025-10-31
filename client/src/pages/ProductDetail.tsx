@@ -225,7 +225,7 @@ export default function ProductDetail() {
           {/* Price */}
           <div style={{ marginBottom: 30, paddingBottom: 24, borderBottom: '1px solid #e8e8e8' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <span style={{ fontSize: 13, fontWeight: 400, color: '#666' }}>₺</span>
+              <span style={{ fontSize: 13, fontWeight: 400, color: '#666' }}>$</span>
               <span style={{ fontSize: 36, fontWeight: 700, color: '#1a1a1a' }}>
                 {product.price.toFixed(2)}
               </span>

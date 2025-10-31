@@ -40,7 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
     }}
     >
-      <Link to={`/products/${product.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Link to={`/products/${product.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer' }}>
         {/* Product Image */}
         <div style={{ position: 'relative', overflow: 'hidden', backgroundColor: '#f8f9fa' }}>
           {product.images && product.images.length > 0 ? (
@@ -145,7 +145,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               alignItems: 'baseline',
               gap: 4
             }}>
-              <span style={{ fontSize: 14, fontWeight: 400, color: '#7f8c8d' }}>₺</span>
+              <span style={{ fontSize: 14, fontWeight: 400, color: '#7f8c8d' }}>$</span>
               {product.price.toFixed(2)}
             </div>
           </div>

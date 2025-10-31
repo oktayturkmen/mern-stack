@@ -126,7 +126,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -137,7 +138,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -148,7 +150,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -159,7 +162,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -184,7 +188,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -195,7 +200,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -206,7 +212,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -217,7 +224,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -242,7 +250,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -253,7 +262,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -264,7 +274,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
@@ -275,7 +286,8 @@ export default function Footer() {
                 color: '#999',
                 textDecoration: 'none',
                 fontSize: 14,
-                transition: 'color 0.2s ease'
+                transition: 'color 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#999'}

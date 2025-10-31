@@ -1,57 +1,64 @@
 import React from 'react';
 import { useGetMyOrdersQuery } from '../app/api';
 import { Link } from 'react-router-dom';
+import AccountLayout from '../components/AccountLayout';
 
 export default function Orders() {
   const { data, isLoading, error } = useGetMyOrdersQuery();
 
   if (isLoading) {
     return (
-      <div style={{ padding: 40, textAlign: 'center' }}>
-        <p style={{ color: '#666' }}>Siparişler yükleniyor...</p>
-      </div>
+      <AccountLayout title="Siparişlerim" subtitle="Tüm siparişlerinizi burada görüntüleyin">
+        <div style={{ padding: 40, textAlign: 'center' }}>
+          <p style={{ color: '#666' }}>Siparişler yükleniyor...</p>
+        </div>
+      </AccountLayout>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: 40, textAlign: 'center', color: '#e74c3c' }}>
-        <p>Siparişler yüklenirken hata oluştu</p>
-      </div>
+      <AccountLayout title="Siparişlerim">
+        <div style={{ padding: 40, textAlign: 'center', color: '#e74c3c' }}>
+          <p>Siparişler yüklenirken hata oluştu</p>
+        </div>
+      </AccountLayout>
     );
   }
 
   if (!data?.orders || data.orders.length === 0) {
     return (
-      <div style={{ padding: 80, textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
-        <div style={{ fontSize: 64, marginBottom: 24 }}>📦</div>
-        <h2 style={{ fontSize: 24, fontWeight: 600, color: '#1a1a1a', marginBottom: 12 }}>
-          Henüz Siparişiniz Yok
-        </h2>
-        <p style={{ fontSize: 15, color: '#666', marginBottom: 32, lineHeight: 1.6 }}>
-          İlk siparişinizi vermek için ürünleri keşfedin
-        </p>
-        <Link to="/products" style={{ 
-          display: 'inline-block', 
-          padding: '12px 32px', 
-          backgroundColor: '#1a1a1a', 
-          color: 'white', 
-          textDecoration: 'none', 
-          borderRadius: 8,
-          fontSize: 15,
-          fontWeight: 500,
-          transition: 'all 0.2s ease'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#333';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = '#1a1a1a';
-        }}
-        >
-          Ürünleri Keşfet
-        </Link>
-      </div>
+      <AccountLayout title="Siparişlerim" subtitle="Tüm siparişlerinizi buradan takip edebilirsiniz">
+        <div style={{ padding: 80, textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
+          <div style={{ fontSize: 64, marginBottom: 24 }}>📦</div>
+          <h2 style={{ fontSize: 24, fontWeight: 600, color: '#1a1a1a', marginBottom: 12 }}>
+            Henüz Siparişiniz Yok
+          </h2>
+          <p style={{ fontSize: 15, color: '#666', marginBottom: 32, lineHeight: 1.6 }}>
+            İlk siparişinizi vermek için ürünleri keşfedin
+          </p>
+          <Link to="/products" style={{ 
+            display: 'inline-block', 
+            padding: '12px 32px', 
+            backgroundColor: '#1a1a1a', 
+            color: 'white', 
+            textDecoration: 'none', 
+            borderRadius: 8,
+            fontSize: 15,
+            fontWeight: 500,
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#333';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#1a1a1a';
+          }}
+          >
+            Ürünleri Keşfet
+          </Link>
+        </div>
+      </AccountLayout>
     );
   }
 
@@ -87,16 +94,7 @@ export default function Orders() {
   };
 
   return (
-    <div style={{ padding: '40px 24px', maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ marginBottom: 40 }}>
-        <h1 style={{ fontSize: 32, fontWeight: 700, color: '#1a1a1a', marginBottom: 8 }}>
-          Siparişlerim
-        </h1>
-        <p style={{ fontSize: 15, color: '#666' }}>
-          Tüm siparişlerinizi buradan takip edebilirsiniz
-        </p>
-      </div>
-      
+    <AccountLayout title="Siparişlerim" subtitle="Tüm siparişlerinizi buradan takip edebilirsiniz">
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {data.orders.map((order: any) => (
           <div key={order._id} style={{
@@ -210,6 +208,6 @@ export default function Orders() {
           </div>
         ))}
       </div>
-    </div>
+    </AccountLayout>
   );
 }

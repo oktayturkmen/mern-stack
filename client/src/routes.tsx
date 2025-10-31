@@ -11,6 +11,7 @@ import Cancel from './pages/Cancel';
 import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import Addresses from './pages/Addresses';
+import Profile from './pages/Profile';
 import AdminProducts from './pages/AdminProducts';
 import AdminOrders from './pages/AdminOrders';
 import AdminNav from './components/AdminNav';
@@ -35,6 +36,7 @@ export default function RoutesConfig() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/orders/:id" element={<OrderDetail />} />
         <Route path="/addresses" element={<Addresses />} />
+        <Route path="/account/profile" element={<Profile />} />
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
       </Routes>

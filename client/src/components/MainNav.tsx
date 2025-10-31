@@ -55,7 +55,7 @@ export default function MainNav() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* Logo / Title */}
           <div>
-            <Link to="/" style={{ textDecoration: 'none', color: '#1a1a1a' }}>
+            <Link to="/" style={{ textDecoration: 'none', color: '#1a1a1a', cursor: 'pointer' }}>
               <h2 style={{ margin: 0, color: '#1a1a1a', fontSize: 24, fontWeight: 400 }}>
                 MERN Store
               </h2>
@@ -73,7 +73,8 @@ export default function MainNav() {
                 borderBottom: isActive('/') ? '1px solid #1a1a1a' : 'none',
                 transition: 'all 0.2s ease',
                 fontSize: 14,
-                fontWeight: isActive('/') ? 500 : 300
+                fontWeight: isActive('/') ? 500 : 300,
+                cursor: 'pointer'
               }}
             >
               Ana Sayfa
@@ -87,7 +88,8 @@ export default function MainNav() {
                 borderBottom: isActive('/products') ? '1px solid #1a1a1a' : 'none',
                 transition: 'all 0.2s ease',
                 fontSize: 14,
-                fontWeight: isActive('/products') ? 500 : 300
+                fontWeight: isActive('/products') ? 500 : 300,
+                cursor: 'pointer'
               }}
             >
               Ürünler
@@ -102,7 +104,8 @@ export default function MainNav() {
                   borderBottom: isActive('/orders') ? '1px solid #1a1a1a' : 'none',
                   transition: 'all 0.2s ease',
                   fontSize: 14,
-                  fontWeight: isActive('/orders') ? 500 : 300
+                  fontWeight: isActive('/orders') ? 500 : 300,
+                  cursor: 'pointer'
                 }}
               >
                 Siparişlerim
@@ -126,7 +129,8 @@ export default function MainNav() {
                 fontWeight: 300,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8
+                gap: 8,
+                cursor: 'pointer'
               }}
               >
                 <span>Sepet</span>
@@ -188,7 +192,7 @@ export default function MainNav() {
                     zIndex: 1000
                   }}>
                     <Link 
-                      to="/"
+                      to="/account/profile"
                       onClick={() => setShowAccountMenu(false)}
                       style={{
                         display: 'block',
@@ -196,24 +200,11 @@ export default function MainNav() {
                         color: '#1a1a1a',
                         textDecoration: 'none',
                         fontSize: 14,
-                        borderBottom: '1px solid #f0f0f0'
+                        borderBottom: '1px solid #f0f0f0',
+                        cursor: 'pointer'
                       }}
                     >
-                      Genel Bakış
-                    </Link>
-                    <Link 
-                      to="/"
-                      onClick={() => setShowAccountMenu(false)}
-                      style={{
-                        display: 'block',
-                        padding: '12px 16px',
-                        color: '#1a1a1a',
-                        textDecoration: 'none',
-                        fontSize: 14,
-                        borderBottom: '1px solid #f0f0f0'
-                      }}
-                    >
-                      Profil
+                      Profil Bilgilerim
                     </Link>
                     <Link 
                       to="/addresses"
@@ -224,7 +215,8 @@ export default function MainNav() {
                         color: '#1a1a1a',
                         textDecoration: 'none',
                         fontSize: 14,
-                        borderBottom: '1px solid #f0f0f0'
+                        borderBottom: '1px solid #f0f0f0',
+                        cursor: 'pointer'
                       }}
                     >
                       Adresler
@@ -238,7 +230,8 @@ export default function MainNav() {
                         color: '#1a1a1a',
                         textDecoration: 'none',
                         fontSize: 14,
-                        borderBottom: '1px solid #f0f0f0'
+                        borderBottom: '1px solid #f0f0f0',
+                        cursor: 'pointer'
                       }}
                     >
                       Siparişlerim
@@ -278,7 +271,8 @@ export default function MainNav() {
                   border: '1px solid #e8e8e8',
                   display: 'flex',
                   flexDirection: 'column',
-                  lineHeight: 1.3
+                  lineHeight: 1.3,
+                  cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = '#1a1a1a';

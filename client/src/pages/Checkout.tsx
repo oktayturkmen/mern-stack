@@ -102,6 +102,7 @@ export default function Checkout() {
     zipCode: '',
     country: ''
   });
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -231,41 +232,111 @@ export default function Checkout() {
               borderRadius: 8,
               backgroundColor: 'white'
             }}>
-              <h3 style={{ marginTop: 0 }}>Teslimat Adresi</h3>
+              <h3 style={{ marginTop: 0, marginBottom: 20 }}>Teslimat Adresi</h3>
+              
+              {/* Kaydedilmiş Adresler */}
+              {user?.user?.addresses && user.user.addresses.length > 0 && (
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: 'block', marginBottom: 10, fontSize: 14, fontWeight: 500, color: '#333' }}>
+                    Kaydedilmiş Adreslerden Seçin
+                  </label>
+                  <select
+                    value={selectedAddressId || ''}
+                    onChange={(e) => {
+                      const addrId = e.target.value;
+                      setSelectedAddressId(addrId);
+                      if (addrId && addrId !== '' && user?.user?.addresses) {
+                        const selectedAddr = user.user.addresses[parseInt(addrId)];
+                        if (selectedAddr) {
+                          setShippingAddress({
+                            street: selectedAddr.street,
+                            city: selectedAddr.city,
+                            state: selectedAddr.state,
+                            zipCode: selectedAddr.zipCode,
+                            country: selectedAddr.country
+                          });
+                        }
+                      } else {
+                        // "Yeni adres girin" seçildiğinde formları temizle
+                        setShippingAddress({
+                          street: '',
+                          city: '',
+                          state: '',
+                          zipCode: '',
+                          country: ''
+                        });
+                      }
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      marginBottom: 15,
+                      border: '1px solid #ddd',
+                      borderRadius: 4,
+                      fontSize: 14,
+                      backgroundColor: 'white',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">Yeni adres girin</option>
+                    {user.user.addresses.map((addr, index) => (
+                      <option key={index} value={index.toString()}>
+                        {addr.street}, {addr.city} {addr.isDefault && '(Varsayılan)'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div style={{ marginBottom: 15 }}>
                 <input
                   type="text"
                   placeholder="Sokak Adresi"
                   value={shippingAddress.street}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
+                  onChange={(e) => {
+                    setShippingAddress({ ...shippingAddress, street: e.target.value });
+                    setSelectedAddressId(null);
+                  }}
                   style={{ width: '100%', padding: 10, marginBottom: 10, border: '1px solid #ddd', borderRadius: 4 }}
                 />
                 <input
                   type="text"
                   placeholder="Şehir"
                   value={shippingAddress.city}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
+                  onChange={(e) => {
+                    setShippingAddress({ ...shippingAddress, city: e.target.value });
+                    setSelectedAddressId(null);
+                  }}
                   style={{ width: '100%', padding: 10, marginBottom: 10, border: '1px solid #ddd', borderRadius: 4 }}
                 />
                 <input
                   type="text"
                   placeholder="İl/İlçe"
                   value={shippingAddress.state}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
+                  onChange={(e) => {
+                    setShippingAddress({ ...shippingAddress, state: e.target.value });
+                    setSelectedAddressId(null);
+                  }}
                   style={{ width: '100%', padding: 10, marginBottom: 10, border: '1px solid #ddd', borderRadius: 4 }}
                 />
                 <input
                   type="text"
                   placeholder="Posta Kodu"
                   value={shippingAddress.zipCode}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, zipCode: e.target.value })}
+                  onChange={(e) => {
+                    setShippingAddress({ ...shippingAddress, zipCode: e.target.value });
+                    setSelectedAddressId(null);
+                  }}
                   style={{ width: '100%', padding: 10, marginBottom: 10, border: '1px solid #ddd', borderRadius: 4 }}
                 />
                 <input
                   type="text"
                   placeholder="Ülke"
                   value={shippingAddress.country}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, country: e.target.value })}
+                  onChange={(e) => {
+                    setShippingAddress({ ...shippingAddress, country: e.target.value });
+                    setSelectedAddressId(null);
+                  }}
                   style={{ width: '100%', padding: 10, marginBottom: 15, border: '1px solid #ddd', borderRadius: 4 }}
                 />
               </div>

@@ -6,7 +6,7 @@ export const api = createApi({
     baseUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:5000',
     credentials: 'include'
   }),
-  tagTypes: ['Product', 'Order', 'Review'],
+  tagTypes: ['Product', 'Order', 'Review', 'User'],
   endpoints: (builder) => ({
     // Auth endpoints
     register: builder.mutation({
@@ -24,7 +24,8 @@ export const api = createApi({
       })
     }),
     getMe: builder.query({
-      query: () => '/api/auth/me'
+      query: () => '/api/auth/me',
+      providesTags: ['User']
     }),
     logout: builder.mutation({
       query: () => ({
@@ -61,6 +62,15 @@ export const api = createApi({
       query: (id) => ({
         url: `/api/products/${id}`,
         method: 'DELETE'
+      })
+    }),
+
+    // Upload endpoints
+    uploadImages: builder.mutation<{ images: string[] }, FormData>({
+      query: (formData) => ({
+        url: '/api/uploads/images',
+        method: 'POST',
+        body: formData
       })
     }),
     
@@ -147,6 +157,23 @@ export const api = createApi({
         method: 'POST',
         body
       })
+    }),
+    
+    // Address endpoints
+    addAddress: builder.mutation({
+      query: (body) => ({
+        url: '/api/auth/addresses',
+        method: 'POST',
+        body
+      }),
+      invalidatesTags: ['User']
+    }),
+    deleteAddress: builder.mutation({
+      query: (id) => ({
+        url: `/api/auth/addresses/${id}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: ['User']
     })
   })
 });
@@ -161,6 +188,7 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useUploadImagesMutation,
   useCreateOrderMutation,
   useGetMyOrdersQuery,
   useGetAllOrdersQuery,
@@ -174,5 +202,7 @@ export const {
   useGetPaymentMethodsQuery,
   useCreatePaymentIntentMutation,
   useConfirmPaymentMutation,
-  useRefundPaymentMutation
+  useRefundPaymentMutation,
+  useAddAddressMutation,
+  useDeleteAddressMutation
 } = api;

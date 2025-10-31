@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetMeQuery } from '../app/api';
 
-// Import images directly
-import img1 from '../img/11.png';
-import img2 from '../img/22.png';
-import img3 from '../img/33.png';
-import img4 from '../img/44.png';
+// Import images directly (ordered as requested)
+import img1 from '../img/44.png';
+import img2 from '../img/55.png';
+import img3 from '../img/66.png';
 
-const heroImages = [img1, img2, img3, img4];
+const heroImages = [img1, img2, img3];
 
 export default function HeroSlider() {
   const { data: meData } = useGetMeQuery();
@@ -29,9 +28,9 @@ export default function HeroSlider() {
   return (
     <div style={{
       position: 'relative',
-      height: 500,
+      height: 420,
       overflow: 'hidden',
-      marginBottom: 60
+      marginBottom: 48
     }}>
       {/* Slides */}
       {heroImages.map((img, index) => (
@@ -60,6 +59,15 @@ export default function HeroSlider() {
       ))}
 
 
+      {/* Subtle overlay for readability */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.25) 100%)',
+        pointerEvents: 'none',
+        zIndex: 1
+      }} />
+
       {/* Content */}
       <div style={{
         position: 'relative',
@@ -67,27 +75,28 @@ export default function HeroSlider() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '80px 24px',
+        padding: '56px 24px',
         textAlign: 'center'
       }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', zIndex: 1 }}>
-          <h1 style={{ fontSize: 48, marginBottom: 16, fontWeight: 700, color: 'white' }}>
-            MERN Store
+        <div style={{ maxWidth: 820, margin: '0 auto', zIndex: 2 }}>
+          <h1 style={{ fontSize: 42, marginBottom: 12, fontWeight: 800, color: 'white', letterSpacing: '-0.5px' }}>
+            Tarzını Keşfet
           </h1>
-          <p style={{ fontSize: 20, marginBottom: 32, opacity: 0.9, lineHeight: 1.6, color: 'white' }}>
-            Modern alışveriş deneyimi, binlerce ürün ve güvenli ödeme
+          <p style={{ fontSize: 18, marginBottom: 28, opacity: 0.92, lineHeight: 1.7, color: 'white' }}>
+            Yeni sezon koleksiyonları, seçkin markalar ve güvenli ödeme deneyimi
           </p>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/products" style={{
               backgroundColor: 'white',
-              color: '#667eea',
-              padding: '14px 32px',
-              borderRadius: 8,
+              color: '#111827',
+              padding: '12px 24px',
+              borderRadius: 999,
               textDecoration: 'none',
-              fontSize: 16,
-              fontWeight: 600,
+              fontSize: 15,
+              fontWeight: 700,
               transition: 'all 0.2s ease',
-              display: 'inline-block'
+              display: 'inline-block',
+              cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-2px)';
@@ -98,26 +107,27 @@ export default function HeroSlider() {
               e.currentTarget.style.boxShadow = 'none';
             }}
             >
-              Ürünleri Keşfet
+              Alışverişe Başla
             </Link>
             {!meData?.user && (
               <Link to="/register" style={{
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgba(255,255,255,0.1)',
                 color: 'white',
-                padding: '14px 32px',
-                borderRadius: 8,
+                padding: '12px 20px',
+                borderRadius: 999,
                 textDecoration: 'none',
-                fontSize: 16,
-                fontWeight: 600,
-                border: '2px solid white',
+                fontSize: 15,
+                fontWeight: 700,
+                border: '1px solid rgba(255,255,255,0.35)',
                 display: 'inline-block',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
               }}
               >
                 Hemen Üye Ol
@@ -130,7 +140,7 @@ export default function HeroSlider() {
       {/* Dots Navigation */}
       <div style={{
         position: 'absolute',
-        bottom: 30,
+        bottom: 20,
         left: '50%',
         transform: 'translateX(-50%)',
         display: 'flex',
