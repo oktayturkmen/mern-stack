@@ -1,4 +1,4 @@
-# MERN E-commerce Monorepo
+# MERN E-commerce Monorepoo
 
 This is a monorepo for a secure, testable MERN e-commerce system.
 
