@@ -1,27 +1,59 @@
-import React, { useState } from 'react';
-import { useGetMeQuery } from '../app/api';
+import React, { useState, useEffect } from 'react';
+import { useGetMeQuery, useUpdateProfileMutation } from '../app/api';
 import AccountLayout from '../components/AccountLayout';
 
 export default function Profile() {
-  const { data: meData } = useGetMeQuery();
+  const { data: meData, refetch } = useGetMeQuery();
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
   const [form, setForm] = useState({
-    name: meData?.user?.name || '',
-    surname: meData?.user?.surname || '',
-    phone: meData?.user?.phone || '',
-    email: meData?.user?.email || '',
-    birthDate: meData?.user?.birthDate || '',
-    gender: (meData?.user?.gender as 'female' | 'male' | 'other') || 'other'
+    name: '',
+    surname: '',
+    phone: '',
+    email: '',
+    birthDate: '',
+    gender: 'other' as 'female' | 'male' | 'other'
   });
+
+  // Update form when meData loads
+  useEffect(() => {
+    if (meData?.user) {
+      setForm({
+        name: meData.user.name || '',
+        surname: meData.user.surname || '',
+        phone: meData.user.phone || '',
+        email: meData.user.email || '',
+        birthDate: meData.user.birthDate || '',
+        gender: (meData.user.gender as 'female' | 'male' | 'other') || 'other'
+      });
+    }
+  }, [meData]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await updateProfile({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        gender: form.gender
+      }).unwrap();
+      await refetch();
+      alert('Profil bilgileri güncellendi!');
+    } catch (error) {
+      console.error('Profil güncelleme hatası:', error);
+      alert('Profil güncellenirken bir hata oluştu.');
+    }
+  };
+
   return (
     <AccountLayout title="Profil Bilgilerim" subtitle="Bilgilerini güncel tut">
-      <div style={{
+      <form onSubmit={handleSubmit} style={{
         border: '1px solid #e5e7eb', borderRadius: 12, backgroundColor: 'white',
         padding: 24, maxWidth: 720
       }}>
@@ -76,12 +108,25 @@ export default function Profile() {
         </div>
 
         <div style={{ marginTop: 20 }}>
-          <button style={{
-            padding: '12px 22px', backgroundColor: '#111827', color: 'white', border: 'none',
-            borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: 'pointer'
-          }}>Kaydet</button>
+          <button 
+            onClick={handleSubmit}
+            disabled={isLoading}
+            style={{
+              padding: '12px 22px', 
+              backgroundColor: isLoading ? '#9ca3af' : '#111827', 
+              color: 'white', 
+              border: 'none',
+              borderRadius: 10, 
+              fontSize: 14, 
+              fontWeight: 600, 
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+          </button>
         </div>
-      </div>
+      </form>
     </AccountLayout>
   );
 }

@@ -27,6 +27,14 @@ export const api = createApi({
       query: () => '/api/auth/me',
       providesTags: ['User']
     }),
+    updateProfile: builder.mutation({
+      query: (body) => ({
+        url: '/api/auth/profile',
+        method: 'PUT',
+        body
+      }),
+      invalidatesTags: ['User']
+    }),
     logout: builder.mutation({
       query: () => ({
         url: '/api/auth/logout',
@@ -181,7 +189,8 @@ export const api = createApi({
 export const { 
   useRegisterMutation, 
   useLoginMutation, 
-  useGetMeQuery, 
+  useGetMeQuery,
+  useUpdateProfileMutation,
   useLogoutMutation,
   useGetProductsQuery,
   useGetProductBySlugQuery,

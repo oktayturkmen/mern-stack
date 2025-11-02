@@ -41,10 +41,12 @@ import productRoutes from './routes/productRoutes';
 import orderRoutes from './routes/orderRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import uploadRoutes from './routes/uploadRoutes';
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/uploads', uploadRoutes);
 app.use('/api/payments', paymentRoutes);
 
 app.use(notFound);

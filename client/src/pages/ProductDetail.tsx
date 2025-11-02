@@ -214,7 +214,7 @@ export default function ProductDetail() {
                 width: 10,
                 height: 10,
                 borderRadius: '50%',
-                backgroundColor: product.stock > 0 ? '#10b981' : '#ef4444'
+                backgroundColor: product.stock > 0 ? '#4CAF50' : '#ef4444'
               }} />
               <span style={{ fontSize: 14, color: '#666', fontWeight: 500 }}>
                 {product.stock > 0 ? `Stokta (${product.stock} adet)` : 'Tükendi'}

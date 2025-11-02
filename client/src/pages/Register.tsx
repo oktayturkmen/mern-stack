@@ -3,7 +3,7 @@ import { useRegisterMutation } from '../app/api';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Register() {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', gender: 'other' as 'female' | 'male' | 'other', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [register, { isLoading, error }] = useRegisterMutation();
   const navigate = useNavigate();
@@ -132,6 +132,102 @@ export default function Register() {
                 e.target.style.boxShadow = 'none';
               }}
             />
+          </div>
+
+          <div style={{ marginBottom: 20 }}>
+            <label htmlFor="phone" style={{ 
+              display: 'block', 
+              marginBottom: 8, 
+              fontSize: 14, 
+              fontWeight: 500,
+              color: '#333'
+            }}>
+              Telefon Numarası*
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              required
+              placeholder="05xx xxx xx xx"
+              style={{ 
+                width: '100%', 
+                padding: '14px 16px', 
+                backgroundColor: '#f5f5f5',
+                border: '1px solid #e0e0e0',
+                borderRadius: 8,
+                fontSize: 15,
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#3498db';
+                e.target.style.backgroundColor = 'white';
+                e.target.style.boxShadow = '0 0 0 3px rgba(52, 152, 219, 0.1)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#e0e0e0';
+                e.target.style.backgroundColor = '#f5f5f5';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: 20 }}>
+            <label htmlFor="gender" style={{ 
+              display: 'block', 
+              marginBottom: 8, 
+              fontSize: 14, 
+              fontWeight: 500,
+              color: '#333'
+            }}>
+              Cinsiyet
+            </label>
+            <div style={{ 
+              display: 'flex', 
+              gap: 20, 
+              alignItems: 'center',
+              padding: '12px 16px',
+              backgroundColor: '#f5f5f5',
+              border: '1px solid #e0e0e0',
+              borderRadius: 8
+            }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 15 }}>
+                <input 
+                  type="radio" 
+                  name="gender" 
+                  value="female" 
+                  checked={formData.gender === 'female'} 
+                  onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'female' | 'male' | 'other' })} 
+                  style={{ cursor: 'pointer' }}
+                />
+                Kadın
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 15 }}>
+                <input 
+                  type="radio" 
+                  name="gender" 
+                  value="male" 
+                  checked={formData.gender === 'male'} 
+                  onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'female' | 'male' | 'other' })} 
+                  style={{ cursor: 'pointer' }}
+                />
+                Erkek
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 15 }}>
+                <input 
+                  type="radio" 
+                  name="gender" 
+                  value="other" 
+                  checked={formData.gender === 'other'} 
+                  onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'female' | 'male' | 'other' })} 
+                  style={{ cursor: 'pointer' }}
+                />
+                Belirtmek istemiyorum
+              </label>
+            </div>
           </div>
 
           <div style={{ marginBottom: 24 }}>

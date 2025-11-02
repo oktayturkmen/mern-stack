@@ -19,7 +19,9 @@ export default function AdminProducts() {
     'Kapüşonlu Üstler',
     'Ceketler',
     'Çocuklar',
-    'Gömlekler'
+    'Gömlekler',
+    'Pantalonlar',
+    'Güneş Gözlükleri'
   ];
   
   const [showForm, setShowForm] = useState(false);

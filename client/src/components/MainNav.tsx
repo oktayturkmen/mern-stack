@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useGetMeQuery, useLogoutMutation } from '../app/api';
 import { useCart } from '../contexts/CartContext';
 
@@ -8,8 +8,12 @@ export default function MainNav() {
   const [logout] = useLogoutMutation();
   const { getTotalItems } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [showSearchOverlay, setShowSearchOverlay] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogout = async () => {
     try {
@@ -39,6 +43,22 @@ export default function MainNav() {
     };
   }, [showAccountMenu]);
 
+  // Focus search input when overlay opens
+  useEffect(() => {
+    if (showSearchOverlay && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showSearchOverlay]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
+      setShowSearchOverlay(false);
+      setSearchTerm('');
+    }
+  };
+
   // Don't show nav for admin users (they have AdminNav)
   if (meData?.user?.role === 'admin') {
     return null;
@@ -49,13 +69,21 @@ export default function MainNav() {
       backgroundColor: '#ffffff',
       padding: '20px',
       marginBottom: 30,
-      borderBottom: '1px solid #e8e8e8'
+      borderBottom: '1px solid #e8e8e8',
+      position: 'relative'
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* Logo / Title */}
           <div>
-            <Link to="/" style={{ textDecoration: 'none', color: '#1a1a1a', cursor: 'pointer' }}>
+            <Link 
+              to="/"
+              onClick={(e) => {
+                // Ana sayfaya giderken search parametresini temizle
+                navigate('/', { replace: true });
+              }}
+              style={{ textDecoration: 'none', color: '#1a1a1a', cursor: 'pointer' }}
+            >
               <h2 style={{ margin: 0, color: '#1a1a1a', fontSize: 24, fontWeight: 400 }}>
                 MERN Store
               </h2>
@@ -80,7 +108,11 @@ export default function MainNav() {
               Ana Sayfa
             </Link>
             <Link 
-              to="/products" 
+              to="/products"
+              onClick={(e) => {
+                // Ürünler sayfasına giderken search parametresini temizle
+                navigate('/products', { replace: true });
+              }}
               style={{ 
                 color: isActive('/products') ? '#1a1a1a' : '#666',
                 textDecoration: 'none',
@@ -94,54 +126,75 @@ export default function MainNav() {
             >
               Ürünler
             </Link>
-            {meData?.user && (
-              <Link 
-                to="/orders" 
-                style={{ 
-                  color: isActive('/orders') ? '#1a1a1a' : '#666',
-                  textDecoration: 'none',
-                  padding: '10px 20px',
-                  borderBottom: isActive('/orders') ? '1px solid #1a1a1a' : 'none',
-                  transition: 'all 0.2s ease',
-                  fontSize: 14,
-                  fontWeight: isActive('/orders') ? 500 : 300,
-                  cursor: 'pointer'
-                }}
-              >
-                Siparişlerim
-              </Link>
-            )}
           </nav>
 
           {/* Cart & Auth Section */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
+            {/* Search Button */}
+            <button
+              onClick={() => setShowSearchOverlay(true)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Ara"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </button>
+
             {/* Cart Button */}
             <Link 
               to="/cart" 
               style={{ 
-                color: isActive('/cart') ? '#1a1a1a' : '#666',
+                color: '#1a1a1a',
                 textDecoration: 'none',
-                padding: '8px 16px',
-                border: isActive('/cart') ? '1px solid #1a1a1a' : '1px solid #e8e8e8',
+                padding: '8px',
+                background: 'transparent',
+                border: 'none',
                 borderRadius: 4,
                 transition: 'all 0.2s ease',
-                fontSize: 14,
-                fontWeight: 300,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
-                cursor: 'pointer'
+                justifyContent: 'center',
+                cursor: 'pointer',
+                position: 'relative'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.7';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
               }}
               >
-                <span>Sepet</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
               {getTotalItems() > 0 && (
                 <span style={{
-                  backgroundColor: '#1a1a1a',
+                  position: 'absolute',
+                  top: '4px',
+                  right: '4px',
+                  backgroundColor: '#e74c3c',
                   color: 'white',
-                  padding: '2px 6px',
-                  borderRadius: 10,
+                  borderRadius: '50%',
+                  width: '18px',
+                  height: '18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   fontSize: 11,
-                  fontWeight: 500
+                  fontWeight: 600,
+                  lineHeight: 1
                 }}>
                   {getTotalItems()}
                 </span>
@@ -288,6 +341,218 @@ export default function MainNav() {
           </div>
         </div>
       </div>
+
+      {/* Search Overlay - Below Navbar */}
+      {showSearchOverlay && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setShowSearchOverlay(false)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              zIndex: 999
+            }}
+          />
+          
+          {/* Search Panel */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              backgroundColor: 'white',
+              padding: '24px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              zIndex: 1000,
+              maxWidth: 1200,
+              margin: '0 auto'
+            }}
+          >
+            <form onSubmit={handleSearchSubmit}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 24 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Kategori, Ürün, Marka veya Sayfa Ara"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    flex: 1,
+                    padding: '12px 16px',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: 4,
+                    fontSize: 14,
+                    outline: 'none'
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setShowSearchOverlay(false);
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowSearchOverlay(false)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: 14,
+                    color: '#1a1a1a',
+                    padding: '4px 8px',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Kapat
+                </button>
+              </div>
+            </form>
+
+            {/* Popüler Aramalar */}
+            <div>
+              <h4 style={{ 
+                fontSize: 14, 
+                fontWeight: 600, 
+                color: '#1a1a1a',
+                margin: '0 0 16px 0'
+              }}>
+                Popüler Aramalar
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 40px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('UGG');
+                      navigate(`/products?search=UGG`);
+                      setShowSearchOverlay(false);
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: 14,
+                      color: '#666',
+                      textAlign: 'left',
+                      padding: 0
+                    }}
+                  >
+                    UGG
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('adidas Samba');
+                      navigate(`/products?search=adidas Samba`);
+                      setShowSearchOverlay(false);
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: 14,
+                      color: '#666',
+                      textAlign: 'left',
+                      padding: 0
+                    }}
+                  >
+                    adidas Samba
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('Sneaker');
+                      navigate(`/products?search=Sneaker`);
+                      setShowSearchOverlay(false);
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: 14,
+                      color: '#666',
+                      textAlign: 'left',
+                      padding: 0
+                    }}
+                  >
+                    Sneaker
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('Igor');
+                      navigate(`/products?search=Igor`);
+                      setShowSearchOverlay(false);
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: 14,
+                      color: '#666',
+                      textAlign: 'left',
+                      padding: 0
+                    }}
+                  >
+                    Igor
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('Eşofman');
+                      navigate(`/products?search=Eşofman`);
+                      setShowSearchOverlay(false);
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: 14,
+                      color: '#666',
+                      textAlign: 'left',
+                      padding: 0
+                    }}
+                  >
+                    Eşofman
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('Chuck Taylor');
+                      navigate(`/products?search=Chuck Taylor`);
+                      setShowSearchOverlay(false);
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: 14,
+                      color: '#666',
+                      textAlign: 'left',
+                      padding: 0
+                    }}
+                  >
+                    Chuck Taylor
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <span style={{ fontSize: 14, color: '#999' }}>Marka</span>
+                  <span style={{ fontSize: 14, color: '#999' }}>Koleksiyon</span>
+                  <span style={{ fontSize: 14, color: '#999' }}>Kategori</span>
+                  <span style={{ fontSize: 14, color: '#999' }}>Marka</span>
+                  <span style={{ fontSize: 14, color: '#999' }}>Kategori</span>
+                  <span style={{ fontSize: 14, color: '#999' }}>Koleksiyon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -74,7 +74,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             position: 'absolute',
             top: 12,
             right: 12,
-            backgroundColor: product.stock > 0 ? '#27ae60' : '#e74c3c',
+            backgroundColor: product.stock > 0 ? '#4CAF50' : '#e74c3c',
             color: 'white',
             padding: '4px 10px',
             borderRadius: 16,

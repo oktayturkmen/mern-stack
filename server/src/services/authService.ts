@@ -3,14 +3,14 @@ import { User, IUser } from '../models/User';
 import { env } from '../config/env';
 
 export interface AuthService {
-  register(name: string, email: string, password: string): Promise<IUser>;
+  register(name: string, email: string, password: string, phone?: string, gender?: 'female' | 'male' | 'other'): Promise<IUser>;
   login(email: string, password: string): Promise<IUser>;
   generateToken(userId: string): string;
   verifyToken(token: string): { userId: string } | null;
 }
 
 class AuthServiceImpl implements AuthService {
-  async register(name: string, email: string, password: string): Promise<IUser> {
+  async register(name: string, email: string, password: string, phone?: string, gender?: 'female' | 'male' | 'other'): Promise<IUser> {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -20,7 +20,7 @@ class AuthServiceImpl implements AuthService {
       throw error;
     }
 
-    const user = new User({ name, email, password });
+    const user = new User({ name, email, password, phone, gender });
     await user.save();
     
     // Remove password from response

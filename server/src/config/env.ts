@@ -10,7 +10,10 @@ const EnvSchema = z.object({
   JWT_SECRET: z.string().min(16, 'JWT_SECRET must be at least 16 chars'),
   CLIENT_URL: z.string().url('CLIENT_URL must be a valid URL'),
   STRIPE_SECRET_KEY: z.string().min(1, 'STRIPE_SECRET_KEY is required'),
-  STRIPE_WEBHOOK_SECRET: z.string().optional()
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  CLOUDINARY_CLOUD_NAME: z.string().optional(),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_API_SECRET: z.string().optional()
 });
 
 const parsed = EnvSchema.safeParse(process.env);
